@@ -1,0 +1,173 @@
+import os
+
+from jinja2 import Environment
+
+
+def create(root: str, env: Environment, args: dict):
+    print('⚙️ App module...')
+    location = root + '/app'
+    os.mkdir(location)
+
+    create_build_gradle(location, env, args)
+    create_proguard_rules(location, env)
+    create_sources(location, env, args)
+
+    print('✅ App module')
+
+
+def create_build_gradle(root: str, env: Environment, args: dict):
+    build_gradle = root + '/' + 'build.gradle'
+    template = env.get_template('app/build.gradle.jinja')
+    package_name = args['--package-name']
+    min_sdk_version = args['--min-sdk-version']
+
+    if not min_sdk_version:
+        min_sdk_version = "24"
+
+    with open(build_gradle, 'w') as f:
+        f.write(template.render(
+            package_name=package_name,
+            min_sdk_version=min_sdk_version
+        ))
+    print('📄 [:app] build.gradle')
+
+
+def create_proguard_rules(root: str, env: Environment):
+    proguard_rules = root + '/' + 'proguard-rules.pro'
+    template = env.get_template('app/proguard-rules.pro.jinja')
+
+    with open(proguard_rules, 'w') as f:
+        f.write(template.render())
+    print('📄 [:app] proguard-rules.pro')
+
+
+def create_sources(root: str, env: Environment, args: dict):
+    package_name = args['--package-name']
+
+    location = root + '/src'
+    os.mkdir(location)
+
+    main_location = location + '/main'
+    os.mkdir(main_location)
+
+    create_manifest(main_location, env, args, package_name)
+    create_main_files(main_location, env, args, package_name)
+
+    test_location = location + '/test'
+    os.mkdir(test_location)
+
+    create_unit_test_files(test_location, env, package_name)
+
+    instrumented_test_location = location + '/androidTest'
+    os.mkdir(instrumented_test_location)
+
+    create_instrumented_test_files(instrumented_test_location, env, package_name)
+
+
+def create_manifest(root: str, env: Environment, args: dict, package_name: str):
+    manifest = root + '/' + 'AndroidManifest.xml'
+    template = env.get_template('app/src/main/AndroidManifest.xml.jinja')
+
+    theme_name = str(args['<project>']).title().strip().replace(' ', '') + 'Theme'
+
+    with open(manifest, 'w') as f:
+        f.write(template.render(
+            package_name=package_name,
+            theme_name=theme_name
+        ))
+
+    print('📄 [:app] AndroidManifest.xml')
+
+
+def create_main_files(root: str, env: Environment, args: dict, package_name: str):
+    location = root + '/kotlin'
+    os.mkdir(location)
+
+    packages = package_name.split('.')
+
+    for p in packages:
+        location += f"/{p}"
+        os.mkdir(location)
+
+    main_activity = location + '/MainActivity.kt'
+    template = env.get_template('app/src/main/kotlin/MainActivity.kt.jinja')
+
+    theme_name = str(args['<project>']).title().strip().replace(' ', '') + 'Theme'
+
+    with open(main_activity, 'w') as f:
+        f.write(template.render(
+            package_name=package_name,
+            theme_name=theme_name
+        ))
+
+    create_theme_files(location, env, package_name, theme_name)
+
+    print('📄 [:app] Source files')
+
+
+def create_theme_files(root: str, env: Environment, package_name: str, theme_name: str):
+    location = root + '/shared'
+    os.mkdir(location)
+
+    location += '/theme'
+    os.mkdir(location)
+
+    color_kt = location + '/Color.kt'
+    shape_kt = location + '/Shape.kt'
+    theme_kt = location + '/Theme.kt'
+    type_kt = location + '/Type.kt'
+
+    template = env.get_template('app/src/main/kotlin/shared/theme/Color.kt.jinja')
+    with open(color_kt, 'w') as f:
+        f.write(template.render(package_name=package_name))
+
+    template = env.get_template('app/src/main/kotlin/shared/theme/Shape.kt.jinja')
+    with open(shape_kt, 'w') as f:
+        f.write(template.render(package_name=package_name))
+
+    template = env.get_template('app/src/main/kotlin/shared/theme/Theme.kt.jinja')
+    with open(theme_kt, 'w') as f:
+        f.write(template.render(
+            package_name=package_name,
+            theme_name=theme_name
+        ))
+
+    template = env.get_template('app/src/main/kotlin/shared/theme/Type.kt.jinja')
+    with open(type_kt, 'w') as f:
+        f.write(template.render(package_name=package_name))
+
+
+def create_unit_test_files(root: str, env: Environment, package_name: str):
+    location = root + '/kotlin'
+    os.mkdir(location)
+
+    packages = package_name.split('.')
+
+    for p in packages:
+        location += f"/{p}"
+        os.mkdir(location)
+
+    example_unit_test_kt = location + '/ExampleUnitTest.kt'
+    template = env.get_template('app/src/test/kotlin/ExampleUnitTest.kt.jinja')
+    with open(example_unit_test_kt, 'w') as f:
+        f.write(template.render(package_name=package_name))
+
+    print('📄 [:app] Unit test files')
+
+
+def create_instrumented_test_files(root: str, env: Environment, package_name: str):
+    location = root + '/kotlin'
+    os.mkdir(location)
+
+    packages = package_name.split('.')
+
+    for p in packages:
+        location += f"/{p}"
+        os.mkdir(location)
+
+    example_instrumented_test_kt = location + '/ExampleInstrumentedTest.kt'
+    template = env.get_template('app/src/androidTest/kotlin/ExampleInstrumentedTest.kt.jinja')
+    with open(example_instrumented_test_kt, 'w') as f:
+        f.write(template.render(package_name=package_name))
+
+    print('📄 [:app] Instrumented test files')
