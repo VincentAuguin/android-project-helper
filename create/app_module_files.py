@@ -1,6 +1,8 @@
 import os
+import shutil
 
 from jinja2 import Environment
+from shutil import ignore_patterns
 
 
 def create(root: str, env: Environment, args: dict):
@@ -52,6 +54,7 @@ def create_sources(root: str, env: Environment, args: dict):
 
     create_manifest(main_location, env, args, package_name)
     create_main_files(main_location, env, args, package_name)
+    create_resources_files(main_location, env, args)
 
     test_location = location + '/test'
     os.mkdir(test_location)
@@ -68,7 +71,7 @@ def create_manifest(root: str, env: Environment, args: dict, package_name: str):
     manifest = root + '/' + 'AndroidManifest.xml'
     template = env.get_template('app/src/main/AndroidManifest.xml.jinja')
 
-    theme_name = str(args['<project>']).title().strip().replace(' ', '') + 'Theme'
+    theme_name = 'Theme.' + str(args['<project>']).title().strip().replace(' ', '')
 
     with open(manifest, 'w') as f:
         f.write(template.render(
@@ -103,6 +106,35 @@ def create_main_files(root: str, env: Environment, args: dict, package_name: str
     create_theme_files(location, env, package_name, theme_name)
 
     print('📄 [:app] Source files')
+
+
+def create_resources_files(root: str, env: Environment, args: dict):
+    location = root + '/res'
+
+    src = os.path.dirname(__file__)
+    shutil.copytree(src=src + '/templates/app/src/main/res', dst=location, ignore=ignore_patterns('values'))
+
+    values_location = location + '/values'
+    os.mkdir(values_location)
+
+    strings_xml = values_location + '/strings.xml'
+    template = env.get_template('/app/src/main/res/values/strings.xml.jinja')
+
+    with open(strings_xml, 'w') as f:
+        f.write(template.render(
+            app_name=args['<project>']
+        ))
+
+    themes_xml = values_location + '/themes.xml'
+    template = env.get_template('/app/src/main/res/values/themes.xml.jinja')
+    theme_name = 'Theme.' + str(args['<project>']).title().strip().replace(' ', '')
+
+    with open(themes_xml, 'w') as f:
+        f.write(template.render(
+            theme_name=theme_name
+        ))
+
+    print('📄 [:app] XML Resource files')
 
 
 def create_theme_files(root: str, env: Environment, package_name: str, theme_name: str):

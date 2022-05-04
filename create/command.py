@@ -12,19 +12,23 @@ def invoke(args: dict):
     print(args)
 
     project_name = str(args['<project>'])
-    cwd = os.getcwd()
-    root = cwd + '/' + project_name.replace(' ', '-')
-    print(f"🔥 Creating Android project '{project_name}' in '{root}'...")
-    if os.path.isdir(root):
-        print(f"⚠️ The path '{root}' already exists, deleting it...")
-        shutil.rmtree(root)
-        print(f"✅️ Obsolete path '{root}' deleted")
 
-    os.mkdir(root)
+    location = args['<location>']
+    if not location:
+        location = os.getcwd()
+    location = os.path.abspath(location)
+    location += '/' + project_name.replace(' ', '-')
+    print(f"🔥 Creating Android project '{project_name}' in '{location}'...")
+    if os.path.isdir(location):
+        print(f"⚠️ The path '{location}' already exists, deleting it...")
+        shutil.rmtree(location)
+        print(f"✅️ Obsolete path '{location}' deleted")
+
+    os.mkdir(location)
 
     env = Environment(loader=PackageLoader("create"))
-    create_git_files(root, env)
-    create_gradle_files(root, env, args)
-    create_app_module(root, env, args)
+    create_git_files(location, env)
+    create_gradle_files(location, env, args)
+    create_app_module(location, env, args)
 
-    print(f"🚀  Android project '{project_name}' created in '{root}'")
+    print(f"🚀  Android project '{project_name}' created in '{location}'")

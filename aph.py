@@ -2,7 +2,7 @@
 Android Project Helper
 
 Usage:
-  aph.py create <project> --package-name=<package> [--gradle-version=<version> --min-sdk-version=<minSdkVersion>]
+  aph.py create --package-name=<package> [--gradle-version=<version> --min-sdk-version=<minSdkVersion>] <project> [<location>]
   aph.py help
   aph.py version
 """
