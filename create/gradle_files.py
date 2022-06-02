@@ -23,7 +23,7 @@ def create_local_properties(root: str, env: Environment):
     sdk = os.getenv('ANDROID_SDK_ROOT')
 
     if not sdk:
-        print('Please set the environment variable ANDROID_SDK_ROOT')
+        print('👀 Please set the environment variable ANDROID_SDK_ROOT')
         return
 
     with open(local_properties, 'w') as f:

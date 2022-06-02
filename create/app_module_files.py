@@ -64,11 +64,13 @@ def create_manifest(root: str, env: Environment, args: dict, package_name: str):
     manifest = root + '/' + 'AndroidManifest.xml'
     template = env.get_template('app/src/main/AndroidManifest.xml.jinja')
 
+    app_class_name = str(args['<project>']).title().strip().replace(' ', '') + 'App'
     theme_name = 'Theme.' + str(args['<project>']).title().strip().replace(' ', '')
 
     with open(manifest, 'w') as f:
         f.write(template.render(
             package_name=package_name,
+            app_class_name=app_class_name,
             theme_name=theme_name
         ))
 
@@ -84,6 +86,16 @@ def create_main_files(root: str, env: Environment, args: dict, package_name: str
     for p in packages:
         location += f"/{p}"
         os.mkdir(location)
+
+    app_class_name = str(args['<project>']).title().strip().replace(' ', '') + 'App'
+    application = location + '/' + app_class_name + '.kt'
+    template = env.get_template('app/src/main/kotlin/App.kt.jinja')
+
+    with open(application, 'w') as f:
+        f.write(template.render(
+            package_name=package_name,
+            app_class_name=app_class_name
+        ))
 
     main_activity = location + '/MainActivity.kt'
     template = env.get_template('app/src/main/kotlin/MainActivity.kt.jinja')

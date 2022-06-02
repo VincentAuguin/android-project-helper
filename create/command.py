@@ -22,7 +22,7 @@ def invoke(args: dict):
     location += '/' + project_name.replace(' ', '-')
     print(f"🔥 Creating Android project '{project_name}' in '{location}'...")
     if os.path.isdir(location):
-        print(f"⚠️ The path '{location}' already exists, deleting it...")
+        print(f"👀 The path '{location}' already exists, deleting it...")
         shutil.rmtree(location)
         print(f"✅️ Obsolete path '{location}' deleted")
 
