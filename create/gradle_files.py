@@ -10,7 +10,7 @@ def create(root: str, env: Environment, args: dict):
     create_local_properties(root, env)
     create_settings_gradle(root, env, args)
     create_gradle_properties(root, env)
-    create_build_gradle(root, env)
+    create_build_gradle(root, env, args)
     create_gradle_wrapper_properties(root, env, args)
     create_gradlew(root)
 
@@ -51,12 +51,16 @@ def create_gradle_properties(root: str, env: Environment):
     print('📄 gradle.properties')
 
 
-def create_build_gradle(root: str, env: Environment):
+def create_build_gradle(root: str, env: Environment, args: dict):
     build_gradle = root + '/' + 'build.gradle'
     template = env.get_template('build.gradle.jinja')
+    min_sdk_version = args['--min-sdk-version']
+
+    if not min_sdk_version:
+        min_sdk_version = "24"
 
     with open(build_gradle, 'w') as f:
-        f.write(template.render())
+        f.write(template.render(min_sdk=min_sdk_version))
     print('📄 build.gradle')
 
 

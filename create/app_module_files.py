@@ -21,16 +21,9 @@ def create_build_gradle(root: str, env: Environment, args: dict):
     build_gradle = root + '/' + 'build.gradle'
     template = env.get_template('app/build.gradle.jinja')
     package_name = args['--package-name']
-    min_sdk_version = args['--min-sdk-version']
-
-    if not min_sdk_version:
-        min_sdk_version = "24"
 
     with open(build_gradle, 'w') as f:
-        f.write(template.render(
-            package_name=package_name,
-            min_sdk_version=min_sdk_version
-        ))
+        f.write(template.render(package_name=package_name))
     print('📄 [:app] build.gradle')
 
 

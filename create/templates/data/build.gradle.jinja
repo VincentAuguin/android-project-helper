@@ -1,0 +1,35 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdk project.ext.compile_sdk
+
+    defaultConfig {
+        minSdk project.ext.min_sdk
+        targetSdk project.ext.target_sdk
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '1.11'
+    }
+}
+
+dependencies {
+    implementation project(path: ':domain')
+
+    implementation 'javax.inject:javax.inject:1'
+
+    testImplementation 'junit:junit:4.13.2'
+}

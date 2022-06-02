@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk project.ext.compile_sdk
 
     defaultConfig {
         applicationId "{{ package_name }}"
-        minSdk {{ min_sdk_version }}
-        targetSdk 31
+        minSdk project.ext.min_sdk
+        targetSdk project.ext.target_sdk
         versionCode 1
         versionName "1.0.0"
 
@@ -26,11 +26,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '1.11'
     }
     buildFeatures {
         compose true
@@ -47,7 +47,7 @@ android {
 
 dependencies {
     implementation project(':domain')
-    // implementation project(':data')
+    implementation project(':data')
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'com.google.android.material:material:1.5.0'
