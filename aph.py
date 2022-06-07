@@ -2,9 +2,9 @@
 Android Project Helper
 
 Usage:
-  aph.py create --package-name=<package> [--gradle-version=<version> --min-sdk-version=<minSdkVersion>] <project> [<location>]
-  aph.py help
-  aph.py version
+  aph create --package-name=<package> [--gradle-version=<version> --min-sdk-version=<minSdkVersion>] <project> [<location>]
+  aph help
+  aph version
 """
 
 from docopt import docopt
