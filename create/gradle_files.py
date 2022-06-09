@@ -1,3 +1,4 @@
+import arguments
 import os
 import shutil
 
@@ -54,13 +55,16 @@ def create_gradle_properties(root: str, env: Environment):
 def create_build_gradle(root: str, env: Environment, args: dict):
     build_gradle = root + '/' + 'build.gradle'
     template = env.get_template('build.gradle.jinja')
-    min_sdk_version = args['--min-sdk-version']
-
-    if not min_sdk_version:
-        min_sdk_version = "24"
+    min_sdk_version = arguments.get_min_sdk_version(args)
+    kotlin_version = arguments.get_kotlin_version(args)
+    gradle_plugin_version = arguments.get_gradle_plugin_version(args)
 
     with open(build_gradle, 'w') as f:
-        f.write(template.render(min_sdk=min_sdk_version))
+        f.write(template.render(
+            min_sdk=min_sdk_version,
+            kotlin_version=kotlin_version,
+            gradle_plugin_version=gradle_plugin_version
+        ))
     print('📄 build.gradle')
 
 
@@ -70,27 +74,29 @@ def create_gradle_wrapper_properties(root: str, env: Environment, args: dict):
     location += '/' + 'wrapper'
     os.mkdir(location)
     gradle_wrapper_properties = location + '/' + 'gradle-wrapper.properties'
-    template = env.get_template('gradle/wrapper/gradle-wrapper.properties.jinja')
+    template = env.get_template(
+        'gradle/wrapper/gradle-wrapper.properties.jinja')
 
-    gradle_version = args['--gradle-version']
-    if not gradle_version:
-        gradle_version = "7.2"
+    gradle_version = arguments.get_gradle_version(args=args)
 
     with open(gradle_wrapper_properties, 'w') as f:
         f.write(template.render(gradle_version=gradle_version))
 
     print('📄 gradle-wrapper.properties')
 
-    shutil.copyfile(os.path.dirname(os.path.realpath(__file__)) + '/executables/gradle-wrapper.jar', location + '/gradle-wrapper.jar')
+    shutil.copyfile(os.path.dirname(os.path.realpath(__file__)) +
+                    '/executables/gradle-wrapper.jar', location + '/gradle-wrapper.jar')
 
     print('📄 gradle-wrapper.jar')
 
 
 def create_gradlew(root: str):
-    shutil.copyfile(os.path.dirname(os.path.realpath(__file__)) + '/executables/gradlew', root + '/gradlew')
+    shutil.copyfile(os.path.dirname(os.path.realpath(__file__)) +
+                    '/executables/gradlew', root + '/gradlew')
 
     print('📄 gradlew')
 
-    shutil.copyfile(os.path.dirname(os.path.realpath(__file__)) + '/executables/gradlew.bat', root + '/gradlew.bat')
+    shutil.copyfile(os.path.dirname(os.path.realpath(__file__)) +
+                    '/executables/gradlew.bat', root + '/gradlew.bat')
 
     print('📄 gradlew.bat')

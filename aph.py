@@ -2,9 +2,14 @@
 Android Project Helper
 
 Usage:
-  aph create --package-name=<package> [--gradle-version=<version> --min-sdk-version=<minSdkVersion>] <project> [<location>]
+  aph create --package-name=<package> [options] <project> [<location>]
   aph help
   aph version
+
+Options:
+  --gradle-plugin-version=<version>     Gradle version to use (default is 7.2)
+  --min-sdk-version=<version>           Minimum Android SDK API version (default is 24)
+  --kotlin-version=<version>            Kotlin version (default is 1.5.21)
 """
 
 from docopt import docopt

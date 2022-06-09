@@ -1,5 +1,6 @@
 import os
 import shutil
+import arguments
 
 from jinja2 import Environment
 from shutil import ignore_patterns
@@ -21,9 +22,11 @@ def create_build_gradle(root: str, env: Environment, args: dict):
     build_gradle = root + '/' + 'build.gradle'
     template = env.get_template('app/build.gradle.jinja')
     package_name = args['--package-name']
+    kotlin_version = arguments.get_kotlin_version(args=args)
 
     with open(build_gradle, 'w') as f:
-        f.write(template.render(package_name=package_name))
+        f.write(template.render(package_name=package_name,
+                kotlin_version=kotlin_version))
     print('📄 [:app] build.gradle')
 
 
@@ -57,15 +60,18 @@ def create_sources(root: str, env: Environment, args: dict):
     instrumented_test_location = location + '/androidTest'
     os.mkdir(instrumented_test_location)
 
-    create_instrumented_test_files(instrumented_test_location, env, package_name)
+    create_instrumented_test_files(
+        instrumented_test_location, env, package_name)
 
 
 def create_manifest(root: str, env: Environment, args: dict, package_name: str):
     manifest = root + '/' + 'AndroidManifest.xml'
     template = env.get_template('app/src/main/AndroidManifest.xml.jinja')
 
-    app_class_name = str(args['<project>']).title().strip().replace(' ', '') + 'App'
-    theme_name = 'Theme.' + str(args['<project>']).title().strip().replace(' ', '')
+    app_class_name = str(args['<project>']).title(
+    ).strip().replace(' ', '') + 'App'
+    theme_name = 'Theme.' + \
+        str(args['<project>']).title().strip().replace(' ', '')
 
     with open(manifest, 'w') as f:
         f.write(template.render(
@@ -87,7 +93,8 @@ def create_main_files(root: str, env: Environment, args: dict, package_name: str
         location += f"/{p}"
         os.mkdir(location)
 
-    app_class_name = str(args['<project>']).title().strip().replace(' ', '') + 'App'
+    app_class_name = str(args['<project>']).title(
+    ).strip().replace(' ', '') + 'App'
     application = location + '/' + app_class_name + '.kt'
     template = env.get_template('app/src/main/kotlin/App.kt.jinja')
 
@@ -100,7 +107,8 @@ def create_main_files(root: str, env: Environment, args: dict, package_name: str
     main_activity = location + '/MainActivity.kt'
     template = env.get_template('app/src/main/kotlin/MainActivity.kt.jinja')
 
-    theme_name = str(args['<project>']).title().strip().replace(' ', '') + 'Theme'
+    theme_name = str(args['<project>']).title(
+    ).strip().replace(' ', '') + 'Theme'
 
     with open(main_activity, 'w') as f:
         f.write(template.render(
@@ -117,7 +125,8 @@ def create_resources_files(root: str, env: Environment, args: dict):
     location = root + '/res'
 
     src = os.path.dirname(__file__)
-    shutil.copytree(src=src + '/templates/app/src/main/res', dst=location, ignore=ignore_patterns('values'))
+    shutil.copytree(src=src + '/templates/app/src/main/res',
+                    dst=location, ignore=ignore_patterns('values'))
 
     values_location = location + '/values'
     os.mkdir(values_location)
@@ -132,7 +141,8 @@ def create_resources_files(root: str, env: Environment, args: dict):
 
     themes_xml = values_location + '/themes.xml'
     template = env.get_template('/app/src/main/res/values/themes.xml.jinja')
-    theme_name = 'Theme.' + str(args['<project>']).title().strip().replace(' ', '')
+    theme_name = 'Theme.' + \
+        str(args['<project>']).title().strip().replace(' ', '')
 
     with open(themes_xml, 'w') as f:
         f.write(template.render(
@@ -154,22 +164,26 @@ def create_theme_files(root: str, env: Environment, package_name: str, theme_nam
     theme_kt = location + '/Theme.kt'
     type_kt = location + '/Type.kt'
 
-    template = env.get_template('app/src/main/kotlin/shared/theme/Color.kt.jinja')
+    template = env.get_template(
+        'app/src/main/kotlin/shared/theme/Color.kt.jinja')
     with open(color_kt, 'w') as f:
         f.write(template.render(package_name=package_name))
 
-    template = env.get_template('app/src/main/kotlin/shared/theme/Shape.kt.jinja')
+    template = env.get_template(
+        'app/src/main/kotlin/shared/theme/Shape.kt.jinja')
     with open(shape_kt, 'w') as f:
         f.write(template.render(package_name=package_name))
 
-    template = env.get_template('app/src/main/kotlin/shared/theme/Theme.kt.jinja')
+    template = env.get_template(
+        'app/src/main/kotlin/shared/theme/Theme.kt.jinja')
     with open(theme_kt, 'w') as f:
         f.write(template.render(
             package_name=package_name,
             theme_name=theme_name
         ))
 
-    template = env.get_template('app/src/main/kotlin/shared/theme/Type.kt.jinja')
+    template = env.get_template(
+        'app/src/main/kotlin/shared/theme/Type.kt.jinja')
     with open(type_kt, 'w') as f:
         f.write(template.render(package_name=package_name))
 
@@ -203,7 +217,8 @@ def create_instrumented_test_files(root: str, env: Environment, package_name: st
         os.mkdir(location)
 
     example_instrumented_test_kt = location + '/ExampleInstrumentedTest.kt'
-    template = env.get_template('app/src/androidTest/kotlin/ExampleInstrumentedTest.kt.jinja')
+    template = env.get_template(
+        'app/src/androidTest/kotlin/ExampleInstrumentedTest.kt.jinja')
     with open(example_instrumented_test_kt, 'w') as f:
         f.write(template.render(package_name=package_name))
 
