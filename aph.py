@@ -7,9 +7,15 @@ Usage:
   aph version
 
 Options:
-  --gradle-plugin-version=<version>     Gradle version to use (default is 7.2)
-  --min-sdk-version=<version>           Minimum Android SDK API version (default is 24)
-  --kotlin-version=<version>            Kotlin version (default is 1.5.21)
+  --min-sdk-version=<version>           Minimum Android SDK API version (default is 26)
+  --compile-sdk-version=<version>       Compile Android SDK API version (default is 33)
+  --target-sdk-version=<version>        Target Android SDK API version (default is 31)
+  --gradle-plugin-version=<version>     Gradle version to use (default is 7.2.1)
+                                        [7.0.0-4, 7.1.0-3, 7.2.0-1]
+  --kotlin-version=<version>            Kotlin version (default is 1.6.10)
+                                        [1.5.10, 1.5.21, 1.5.30, 1.5.31, 1.6.0, 1.6.10, 1.6.20, 1.6.21]
+  -f, --force                           Override existing destination if the generated directory already exists
+  -v, --verbose                         Print more verbose logs
 """
 
 from docopt import docopt

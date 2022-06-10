@@ -1,6 +1,5 @@
 import os
 import shutil
-import arguments
 
 from jinja2 import Environment
 from shutil import ignore_patterns
@@ -22,11 +21,9 @@ def create_build_gradle(root: str, env: Environment, args: dict):
     build_gradle = root + '/' + 'build.gradle'
     template = env.get_template('app/build.gradle.jinja')
     package_name = args['--package-name']
-    kotlin_version = arguments.get_kotlin_version(args=args)
 
     with open(build_gradle, 'w') as f:
-        f.write(template.render(package_name=package_name,
-                kotlin_version=kotlin_version))
+        f.write(template.render(package_name=package_name))
     print('📄 [:app] build.gradle')
 
 

@@ -1,4 +1,5 @@
-import arguments
+from utils.error_utils import raise_and_clean
+from utils.args_utils import get_compile_sdk_version, get_compose_version, get_kotlin_version, get_gradle_plugin_version, get_min_sdk_version, get_gradle_version, get_target_sdk_version
 import os
 import shutil
 
@@ -8,7 +9,7 @@ from jinja2 import Environment
 def create(root: str, env: Environment, args: dict):
     print('⚙️ Gradle files...')
 
-    create_local_properties(root, env)
+    create_local_properties(root, env, args)
     create_settings_gradle(root, env, args)
     create_gradle_properties(root, env)
     create_build_gradle(root, env, args)
@@ -18,14 +19,17 @@ def create(root: str, env: Environment, args: dict):
     print('✅ Gradle files')
 
 
-def create_local_properties(root: str, env: Environment):
+def create_local_properties(root: str, env: Environment, args: dict):
     local_properties = root + '/' + 'local.properties'
     template = env.get_template('local.properties.jinja')
     sdk = os.getenv('ANDROID_SDK_ROOT')
 
     if not sdk:
-        print('👀 Please set the environment variable ANDROID_SDK_ROOT')
-        return
+        message = """
+        Please set the environment variable ANDROID_SDK_ROOT:
+        export ANDROID_SDK_ROOT=\"path/to/android/sdk\"
+        """
+        raise_and_clean(message, args)
 
     with open(local_properties, 'w') as f:
         f.write(template.render(sdk=sdk))
@@ -55,15 +59,30 @@ def create_gradle_properties(root: str, env: Environment):
 def create_build_gradle(root: str, env: Environment, args: dict):
     build_gradle = root + '/' + 'build.gradle'
     template = env.get_template('build.gradle.jinja')
-    min_sdk_version = arguments.get_min_sdk_version(args)
-    kotlin_version = arguments.get_kotlin_version(args)
-    gradle_plugin_version = arguments.get_gradle_plugin_version(args)
+
+    min_sdk_version = get_min_sdk_version(args)
+    compile_sdk_version = get_compile_sdk_version(args)
+    target_sdk_version = get_target_sdk_version(args)
+    kotlin_version = get_kotlin_version(args)
+    gradle_plugin_version = get_gradle_plugin_version(args)
+    compose_version = get_compose_version(args)
+
+    if min_sdk_version > compile_sdk_version or min_sdk_version > target_sdk_version or target_sdk_version > compile_sdk_version:
+        message = f"""
+        The provided minimum/target/compile Android SDK versions are not relevant.
+        min={min_sdk_version},target={target_sdk_version},compile={compile_sdk_version}
+        Please change versions to match this constraint: min <= target <= compile
+        """
+        raise_and_clean(message, args)
 
     with open(build_gradle, 'w') as f:
         f.write(template.render(
             min_sdk=min_sdk_version,
+            compile_sdk=compile_sdk_version,
+            target_sdk=target_sdk_version,
             kotlin_version=kotlin_version,
-            gradle_plugin_version=gradle_plugin_version
+            gradle_plugin_version=gradle_plugin_version,
+            compose_version=compose_version
         ))
     print('📄 build.gradle')
 
@@ -77,7 +96,7 @@ def create_gradle_wrapper_properties(root: str, env: Environment, args: dict):
     template = env.get_template(
         'gradle/wrapper/gradle-wrapper.properties.jinja')
 
-    gradle_version = arguments.get_gradle_version(args=args)
+    gradle_version = get_gradle_version(args=args)
 
     with open(gradle_wrapper_properties, 'w') as f:
         f.write(template.render(gradle_version=gradle_version))

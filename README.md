@@ -17,9 +17,18 @@ Remember to make the binary executable:
 chmod +x ./aph
 ```
 
+Ensure you have the environment variable `ANDROID_SDK_ROOT` set, if not:
+```bash
+export ANDROID_SDK_ROOT="/path/to/android/sdk"
+```
+
 To create a project:
 ```bash
-./aph create --package-name=com.example.app --min-sdk-version=26 "My awesome Android project" /path/to/location
+./aph create \
+    --package-name=com.example.app
+    --min-sdk-version=26 \
+    "My awesome Android project" \
+    /path/to/location
 ```
 
 ## Contribution

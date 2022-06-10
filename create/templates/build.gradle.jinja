@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        compose_version = '1.0.1'
+        compose_version = '{{ compose_version }}'
     }
     dependencies {
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.40.5'
@@ -14,8 +14,8 @@ plugins {
 
 allprojects {
     ext {
-        compile_sdk = 31
-        target_sdk = 31
+        compile_sdk = {{ compile_sdk }}
+        target_sdk = {{ target_sdk }}
         min_sdk = {{ min_sdk }}
     }
 }
