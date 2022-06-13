@@ -1,4 +1,5 @@
 import shutil
+import inquirer
 
 from jinja2 import Environment, PackageLoader
 
@@ -20,11 +21,20 @@ def invoke(args: dict):
 
     print(f"🔥 Creating Android project '{project_name}' in '{location}'...")
     if os.path.isdir(location):
-        override = args['--force']
+        override = inquirer.prompt(
+            [
+                inquirer.Confirm(
+                    name='override',
+                    message=f"👀 The path {location} already exists. Would you override it?",
+                    default=False
+                )
+            ])['override']
+
         if not override:
-            raise RuntimeError(f"The path '{location}' already exists")
+            raise RuntimeError(
+                "Creation aborted to not delete conflicting path")
         else:
-            print(f"👀 Overriding path '{location}'")
+            print(f"Overriding path '{location}'")
             shutil.rmtree(location)
 
     os.mkdir(location)

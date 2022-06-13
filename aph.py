@@ -15,7 +15,6 @@ Options:
                                         [7.0.0-4, 7.1.0-3, 7.2.0-1]
   --kotlin-version=<version>            Kotlin version (default is 1.6.10)
                                         [1.5.10, 1.5.21, 1.5.30, 1.5.31, 1.6.0, 1.6.10, 1.6.20, 1.6.21]
-  -f, --force                           Override existing destination if the generated directory already exists
   -v, --verbose                         Print more verbose logs
 """
 

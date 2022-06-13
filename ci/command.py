@@ -27,7 +27,7 @@ def invoke(args: dict):
     if type == _choices[0]:
         docker(location, env)
     else:
-        raise RuntimeError("The specified CI type '{type}' is not recognized")
+        raise RuntimeError(f"The specified CI type '{type}' is not recognized")
 
 
 def docker(location: str, env: Environment):
