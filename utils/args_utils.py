@@ -52,6 +52,11 @@ def get_resolved_location(args: dict):
     if not location:
         location = os.getcwd()
     location = os.path.abspath(location)
+    return location
+
+
+def get_resolved_project_location(args: dict):
+    location = get_resolved_location(args)
     location += '/' + get_project_name(args).replace(' ', '-')
     return location
 

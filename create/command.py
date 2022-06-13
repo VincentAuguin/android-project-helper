@@ -8,9 +8,7 @@ from create.app_module_files import create as create_app_module
 from create.domain_module_files import create as create_domain_module
 from create.data_module_files import create as create_data_module
 import os
-from utils.args_utils import get_project_name, get_resolved_location
-
-from utils.error_utils import raise_and_clean
+from utils.args_utils import get_project_name, get_resolved_project_location
 
 
 def invoke(args: dict):
@@ -18,7 +16,7 @@ def invoke(args: dict):
         print(args)
 
     project_name = get_project_name(args)
-    location = get_resolved_location(args)
+    location = get_resolved_project_location(args)
 
     print(f"🔥 Creating Android project '{project_name}' in '{location}'...")
     if os.path.isdir(location):

@@ -4,8 +4,8 @@ by Vincent Auguin (https://github.com/VincentAuguin/android-project-helper)
 
 Usage:
   aph create --package-name=<package> [options] <project> [<location>]
+  aph ci [<location>]
   aph help
-  aph version
 
 Options:
   --min-sdk-version=<version>           Minimum Android SDK API version (default is 26)
@@ -21,17 +21,17 @@ Options:
 
 from docopt import docopt
 
-from version.command import invoke as version_command
 from create.command import invoke as create_command
+from ci.command import invoke as ci_command
 
 
 def main():
     args = docopt(__doc__)
 
-    if args['version']:
-        version_command()
-    elif args['create']:
+    if args['create']:
         create_command(args)
+    elif args['ci']:
+        ci_command(args)
     else:
         print(__doc__)
 
