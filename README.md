@@ -36,6 +36,19 @@ To get full available commands and options
 ./aph help
 ```
 
+## Roadmap
+
+- [x] `help` command
+- [x] `create` command to initiate an Android app skeleton
+- [ ] `add:module` command to add a module to an existing Android project
+- [ ] `add:ci` command to add preformated CI file:
+    - [ ] Gitlab CI/CD
+    - [ ] Github Actions
+    - [ ] Jenkins
+    - [ ] Bitrise.io
+    - [ ] Buddy.works
+    - [ ] Docker (generate a `Dockerfile` to create the base image for CI agents to run from)
+
 ## Contribution
 
 Feel free to contribute with pull requests :sunglasses:
