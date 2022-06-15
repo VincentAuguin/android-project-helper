@@ -1,9 +1,14 @@
+{%- set deploy = deploy_solution != 'none' -%}
+
 image: vincentauguin/android-ci
+
+tags:
+- docker
 
 stages:
 - Build
 - Signing
-{%- if deploy_with_firebase %}
+{%- if deploy %}
 - Deployment
 {%- endif %}
 
@@ -22,7 +27,7 @@ build:
   - export GRADLE_USER_HOME=$(pwd)/.gradle
   - chmod +x ./gradlew
   script:
-  {%- if deploy_with_firebase %}
+  {%- if deploy_solution == 'firebase-app-distribution' %}
   - cp ${FIREBASE_GOOGLE_SERVICES_JSON_FILE} app/google-services.json
   {%- endif %}
   - ./gradlew assembleRelease
@@ -36,7 +41,7 @@ sign:
   - base64 -d -i ${KEYSTORE_FILE_BASE64} -o app.keystore
   script:
   - apksigner sign
-    --out app/build/outputs/apk/app-release.apk
+    --out app/build/outputs/apk/app-release-signed.apk
     --ks app.keystore
     --ks-key-alias ${KEYSTORE_ALIAS}
     --ks-pass pass:${KEYSTORE_PASSWORD}
@@ -45,7 +50,7 @@ sign:
     paths:
     - app/build/outputs/apk/app-release-signed.apk
 
-{%- if deploy_with_firebase %}
+{%- if deploy_solution == 'firebase-app-distribution' %}
 
 deploy:
   stage: Deployment

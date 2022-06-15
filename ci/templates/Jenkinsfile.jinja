@@ -1,0 +1,50 @@
+{%- set deploy = deploy_solution != 'none' -%}
+
+pipeline {
+    agent {
+        docker {
+            image 'vincentauguin/android-ci'
+            label 'docker'
+        }
+    }
+    when { expression { env.BRANCH_IS_PRIMARY } }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'export GRADLE_USER_HOME=$(pwd)/.gradle'
+                sh 'chmod +x ./gradlew'
+                {%- if deploy_solution == 'firebase-app-distribution' %}
+                sh "cp ${credentials 'FIREBASE_GOOGLE_SERVICES_JSON_FILE'} app/google-services.json"
+                {%- endif %}
+                sh './gradlew clean assembleRelease'
+            }
+        }
+        stage('Signing') {
+            steps {
+                sh "base64 -d -i ${credentials 'KEYSTORE_FILE_BASE64'} -o app.keystore"
+
+                String apk = "app/build/outputs/apk/app-release.apk"
+                String ks = "--ks app.keystore"
+                String ksAlias = "--ks-key-alias ${credentials 'KEYSTORE_ALIAS'}"
+                String ksPass = "--ks-pass pass:${credentials 'KEYSTORE_PASSWORD'}"
+                String out = "--out app/build/outputs/apk/app-release-signed.apk"
+
+                sh "apksigner sign $out $ks $ksAlias $ksPass $apk"
+            }
+        }
+
+        {%- if deploy_solution == 'firebase-app-distribution' %}
+
+        stage('Deploy') {
+            steps {
+                String apk = "app/build/outputs/apk/app-release-signed.apk "
+                String token = "--token ${credentials 'FIREBASE_TOKEN'}"
+                String app = "--app ${credentials 'FIREBASE_APP_ID'}"
+                String groups = ['developers', 'qa-team'].join(',')
+                
+                sh "firebase appdistribution:distribute $apk $app $groups $token"
+            }
+        }
+        {%- endif %}
+    }
+}
