@@ -4,7 +4,7 @@ by Vincent Auguin (https://github.com/VincentAuguin/android-project-helper)
 
 Usage:
   aph create --package-name=<package> [options] <project> [<location>]
-  aph ci [<location>]
+  aph add:ci [<location>]
   aph help
 
 Options:
@@ -29,7 +29,7 @@ def main():
 
     if args['create']:
         create_command(args)
-    elif args['ci']:
+    elif args['add:ci']:
         ci_command(args)
     else:
         print(__doc__)

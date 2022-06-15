@@ -6,6 +6,8 @@ This CLI aims to help you to initialize a new modern Android project with:
 - Compose
 - Hilt
 
+It also helps with CI integration.
+
 ## Installation
 
 Download the latest release of this repository and unzip the archive:
@@ -22,6 +24,8 @@ export ANDROID_SDK_ROOT="/path/to/android/sdk"
 
 ## Usage
 
+### Create project
+
 To create a project:
 ```bash
 ./aph create \
@@ -30,6 +34,17 @@ To create a project:
     "My awesome Android project" \
     /path/to/location
 ```
+
+### Add CI solution
+
+To build and deploy your app with automated CI:
+```bash
+./aph ci
+```
+
+See the current supported solutions in [Roadmap](#Roadmap) section.
+
+### Help
 
 To get full available commands and options
 ```bash
@@ -41,13 +56,12 @@ To get full available commands and options
 - [x] `help` command
 - [x] `create` command to initiate an Android app skeleton
 - [ ] `add:module` command to add a module to an existing Android project
-- [ ] `add:ci` command to add preformated CI file:
-    - [ ] Gitlab CI/CD
+- [x] `add:ci` command to add preformated CI solution:
+    - [x] Gitlab CI/CD
     - [ ] Github Actions
     - [ ] Jenkins
     - [ ] Bitrise.io
     - [ ] Buddy.works
-    - [ ] Docker (generate a `Dockerfile` to create the base image for CI agents to run from)
 
 ## Contribution
 

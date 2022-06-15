@@ -1,0 +1,59 @@
+image: vincentauguin/android-ci
+
+stages:
+- Build
+- Signing
+{%- if deploy_with_firebase %}
+- Deployment
+{%- endif %}
+
+workflow:
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+cache:
+  key: ${CI_PROJECT_ID}
+  paths:
+  - .gradle/
+
+build:
+  stage: Build
+  before_script:
+  - export GRADLE_USER_HOME=$(pwd)/.gradle
+  - chmod +x ./gradlew
+  script:
+  {%- if deploy_with_firebase %}
+  - cp ${FIREBASE_GOOGLE_SERVICES_JSON_FILE} app/google-services.json
+  {%- endif %}
+  - ./gradlew assembleRelease
+  artifacts:
+    paths:
+    - app/build/outputs/apk/app-release.apk
+
+sign:
+  stage: Signing
+  before_script:
+  - base64 -d -i ${KEYSTORE_FILE_BASE64} -o app.keystore
+  script:
+  - apksigner sign
+    --out app/build/outputs/apk/app-release.apk
+    --ks app.keystore
+    --ks-key-alias ${KEYSTORE_ALIAS}
+    --ks-pass pass:${KEYSTORE_PASSWORD}
+    app/build/outputs/apk/app-release.apk
+  artifacts:
+    paths:
+    - app/build/outputs/apk/app-release-signed.apk
+
+{%- if deploy_with_firebase %}
+
+deploy:
+  stage: Deployment
+  script:
+  - firebase appdistribution:distribute app/build/outputs/apk/app-release-signed.apk
+    --app ${FIREBASE_APP_ID}
+    --groups ${FIREBASE_GROUPS}
+    --token ${FIREBASE_TOKEN}
+  variables:
+    FIREBASE_GROUPS: 'developers,qa-team'
+{%- endif %}
