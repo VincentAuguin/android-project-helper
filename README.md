@@ -39,7 +39,7 @@ To create a project:
 
 To build and deploy your app with automated CI:
 ```bash
-./aph ci
+./aph add:ci
 ```
 
 See the current supported solutions in [Roadmap](#Roadmap) section.
@@ -59,8 +59,8 @@ To get full available commands and options
 - [x] `add:ci` command to add preformated CI solution:
     - [x] Gitlab CI/CD
     - [ ] Github Actions
-    - [ ] Jenkins
-    - [ ] Bitrise.io
+    - [x] Jenkins
+    - [x] Bitrise.io
     - [ ] Buddy.works
 
 ## Contribution
