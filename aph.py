@@ -36,4 +36,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except RuntimeError as err:
+        print(f'\n❌ Failed: {str(err)}')

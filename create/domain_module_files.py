@@ -7,14 +7,12 @@ from utils.package_utils import create_package_directories
 
 
 def create(root: str, env: Environment, args: dict):
-    print('⚙️ Domain module...')
+    print('🛠 Domain module...')
     location = root + '/domain'
     os.mkdir(location)
 
     create_build_gradle(location, env)
     create_sources(location, env, args)
-
-    print('✅ Domain module')
 
 
 def create_build_gradle(root: str, env: Environment):

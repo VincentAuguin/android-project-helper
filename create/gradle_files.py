@@ -1,22 +1,21 @@
+import utils
+from utils import error_utils
 from utils.error_utils import raise_and_clean
 from utils.args_utils import get_compile_sdk_version, get_compose_version, get_kotlin_version, get_gradle_plugin_version, get_min_sdk_version, get_gradle_version, get_target_sdk_version
 import os
-import shutil
+import subprocess
 
 from jinja2 import Environment
 
 
 def create(root: str, env: Environment, args: dict):
-    print('⚙️ Gradle files...')
+    print('🛠 Gradle files...')
 
     create_local_properties(root, env, args)
     create_settings_gradle(root, env, args)
     create_gradle_properties(root, env)
     create_build_gradle(root, env, args)
-    create_gradle_wrapper_properties(root, env, args)
-    create_gradlew(root)
-
-    print('✅ Gradle files')
+    create_gradle_wrapper(root, args)
 
 
 def create_local_properties(root: str, env: Environment, args: dict):
@@ -87,35 +86,20 @@ def create_build_gradle(root: str, env: Environment, args: dict):
     print('📄 build.gradle')
 
 
-def create_gradle_wrapper_properties(root: str, env: Environment, args: dict):
-    location = root + '/' + 'gradle'
-    os.mkdir(location)
-    location += '/' + 'wrapper'
-    os.mkdir(location)
-    gradle_wrapper_properties = location + '/' + 'gradle-wrapper.properties'
-    template = env.get_template(
-        'gradle/wrapper/gradle-wrapper.properties.jinja')
+def create_gradle_wrapper(root: str, args: dict):
+    gradle_version = get_gradle_version(args)
+    command = f"gradle wrapper --gradle-version={gradle_version} --distribution-type=bin"
+    emoji_prefix = '📄'
+    try:
+        subprocess.check_call(
+            command.split(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=root)
 
-    gradle_version = get_gradle_version(args=args)
+    except subprocess.CalledProcessError:
+        emoji_prefix = '❌'
+        error_utils.create_command_warnings.append(
+            f"👀 Run command '{command}' manually to debug manually the gradle wrapper generation issue")
 
-    with open(gradle_wrapper_properties, 'w') as f:
-        f.write(template.render(gradle_version=gradle_version))
-
-    print('📄 gradle-wrapper.properties')
-
-    shutil.copyfile(os.path.dirname(os.path.realpath(__file__)) +
-                    '/executables/gradle-wrapper.jar', location + '/gradle-wrapper.jar')
-
-    print('📄 gradle-wrapper.jar')
-
-
-def create_gradlew(root: str):
-    shutil.copyfile(os.path.dirname(os.path.realpath(__file__)) +
-                    '/executables/gradlew', root + '/gradlew')
-
-    print('📄 gradlew')
-
-    shutil.copyfile(os.path.dirname(os.path.realpath(__file__)) +
-                    '/executables/gradlew.bat', root + '/gradlew.bat')
-
-    print('📄 gradlew.bat')
+    print(f'{emoji_prefix} gradle-wrapper.properties')
+    print(f'{emoji_prefix} gradle-wrapper.jar')
+    print(f'{emoji_prefix} gradlew')
+    print(f'{emoji_prefix} gradlew.bat')

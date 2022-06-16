@@ -9,6 +9,7 @@ from create.app_module_files import create as create_app_module
 from create.domain_module_files import create as create_domain_module
 from create.data_module_files import create as create_data_module
 import os
+from utils import error_utils
 from utils.args_utils import get_project_name, get_resolved_project_location
 
 
@@ -34,7 +35,7 @@ def invoke(args: dict):
             raise RuntimeError(
                 "Creation aborted to not delete conflicting path")
         else:
-            print(f"Overriding path '{location}'")
+            print(f"✅ Overriding path '{location}'")
             shutil.rmtree(location)
 
     os.mkdir(location)
@@ -46,4 +47,9 @@ def invoke(args: dict):
     create_domain_module(location, env, args)
     create_data_module(location, env, args)
 
-    print(f"🚀  Android project '{project_name}' created in '{location}'")
+    warnings = error_utils.create_command_warnings
+    print(f"🚀 Android project '{project_name}' created in '{location}'")
+    if len(warnings) > 0:
+        print(f"🧐 Completed with {len(warnings)} warning(s):")
+        for w in warnings:
+            print(w)

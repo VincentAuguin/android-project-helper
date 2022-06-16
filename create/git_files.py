@@ -2,11 +2,9 @@ from jinja2 import Environment
 
 
 def create(root: str, env: Environment):
-    print('⚙️ Git files...')
+    print('🛠 Git files...')
 
     create_git_ignore(root, env)
-
-    print('✅ Git files')
 
 
 def create_git_ignore(root: str, env: Environment):

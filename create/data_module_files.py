@@ -7,15 +7,13 @@ from utils.package_utils import create_package_directories
 
 
 def create(root: str, env: Environment, args: dict):
-    print('⚙️ Data module...')
+    print('🛠 Data module...')
     location = root + '/data'
     os.mkdir(location)
 
     create_build_gradle(location, env)
     create_sources(location, env, args)
     create_proguard_rules(location, env)
-
-    print('✅ Data module')
 
 
 def create_build_gradle(root: str, env: Environment):

@@ -9,15 +9,13 @@ from utils.package_utils import create_package_directories
 
 
 def create(root: str, env: Environment, args: dict):
-    print('⚙️ App module...')
+    print('🛠 App module...')
     location = root + '/app'
     os.mkdir(location)
 
     create_build_gradle(location, env, args)
     create_proguard_rules(location, env)
     create_sources(location, env, args)
-
-    print('✅ App module')
 
 
 def create_build_gradle(root: str, env: Environment, args: dict):
