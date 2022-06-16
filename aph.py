@@ -21,7 +21,7 @@ Options:
 from docopt import docopt
 
 from create.command import invoke as create_command
-from ci.command import invoke as ci_command
+from add_ci.command import invoke as ci_command
 
 
 def main():

@@ -1,0 +1,76 @@
+{%- set deploy = deploy_solution != 'none' -%}
+
+---
+format_version: '11'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: android
+trigger_map:
+- push_branch: main
+  {%- if deploy_solution == 'firebase-app-distribution' %}
+  workflow: deploy-firebase
+  {%- else %}
+  workflow: build
+  {%- endif %}
+workflows:
+  prepare:
+    steps:
+    - activate-ssh-key@4:
+        run_if: {% raw  %}'{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'{% endraw %}
+    - git-clone@6: {}
+    - file-downloader@1:
+        title: Download google-services.json
+        run_if: {% raw  %}'{{getenv "BITRISEIO_FIREBASE_GOOGLE_SERVICES_JSON_URL" | ne ""}}'{% endraw %}
+        inputs:
+        - source: "$BITRISEIO_FIREBASE_GOOGLE_SERVICES_JSON_URL"
+        - destination: "${PROJECT_LOCATION}/${MODULE}/google-services.json"
+    - cache-pull@2: {}
+    - install-missing-android-tools@3:
+        inputs:
+        - gradlew_path: "$PROJECT_LOCATION/gradlew"
+  build:
+    steps:
+    - change-android-versioncode-and-versionname@1:
+        inputs:
+        - build_gradle_path: "$PROJECT_LOCATION/$MODULE/build.gradle"
+        - new_version_code: "$BITRISE_BUILD_NUMBER"
+    - android-build@1:
+        inputs:
+        - project_location: "$PROJECT_LOCATION"
+        - module: "$MODULE"
+        - build_type: apk
+        - variant: "release"
+    - sign-apk@1:
+        run_if: {% raw  %}'{{getenv "BITRISEIO_ANDROID_KEYSTORE_URL" | ne ""}}'{% endraw %}
+        inputs:
+        - use_apk_signer: 'true'
+    - cache-push@2: {}
+
+  {%- if deploy_solution == 'firebase-app-distribution' %}
+
+  deploy-firebase:
+    description: Deploy to Firebase
+    steps:
+    - firebase-app-distribution@0:
+        inputs:
+        # Uncomment if you experience deployment issues requiring service account usage.
+        # Follow the steps 1,2 & 3 and upload the json file to Bitrise project > Workflow > Code Signing > Generic File Storage
+        # with file storage id 'FIREBASE_SERVICE_ACCOUNT_PRIVATE_KEY'.
+        # https://firebase.google.com/docs/app-distribution/android/distribute-gradle#service-acc-gradle
+        #
+        # - service_credentials_file: "$BITRISEIO_FIREBASE_SERVICE_ACCOUNT_PRIVATE_KEY_URL"
+        - app_path: "$BITRISE_APK_PATH"
+        - app: "$FIREBASE_APP_ID"
+        - groups: 'developers,qa-team'
+        - firebase_token: "$FIREBASE_TOKEN"
+    before_run:
+    - prepare
+    - build
+  {%- endif %}
+app:
+  envs:
+  - opts:
+      is_expand: false
+    PROJECT_LOCATION: "."
+  - opts:
+      is_expand: false
+    MODULE: app
