@@ -2,6 +2,9 @@ import os
 
 from jinja2 import Environment
 
+from utils.args_utils import get_package_name
+from utils.package_utils import create_package_directories
+
 
 def create(root: str, env: Environment, args: dict):
     print('⚙️ Domain module...')
@@ -27,27 +30,18 @@ def create_sources(root: str, env: Environment, args: dict):
     location = root + '/src'
     os.mkdir(location)
 
-    source_files_location = location + '/main'
-    os.mkdir(source_files_location)
-    source_files_location += '/kotlin'
-    os.mkdir(source_files_location)
+    source_files_location = location + '/main/kotlin'
+    os.makedirs(source_files_location)
 
-    package_name = args['--package-name']
-    packages = package_name.split('.')
+    package_name = get_package_name(args)
 
-    for p in packages:
-        source_files_location += f"/{p}"
-        os.mkdir(source_files_location)
+    create_package_directories(source_files_location, package_name)
 
     print('📄 [:domain] Source files')
 
-    test_location = location + '/test'
-    os.mkdir(test_location)
-    test_location += '/kotlin'
-    os.mkdir(test_location)
+    test_location = location + '/test/kotlin'
+    os.makedirs(test_location)
 
-    for p in packages:
-        test_location += f"/{p}"
-        os.mkdir(test_location)
+    create_package_directories(test_location, package_name)
 
     print('📄 [:domain] Unit test files')

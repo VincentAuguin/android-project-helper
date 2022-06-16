@@ -1,6 +1,10 @@
 import os
 
 
+def get_package_name(args: dict):
+    return args['--package-name']
+
+
 def get_kotlin_version(args: dict):
     version = args['--kotlin-version']
     if not version:

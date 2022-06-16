@@ -3,6 +3,9 @@ import shutil
 
 from jinja2 import Environment
 from shutil import ignore_patterns
+from utils.args_utils import get_package_name
+
+from utils.package_utils import create_package_directories
 
 
 def create(root: str, env: Environment, args: dict):
@@ -37,33 +40,33 @@ def create_proguard_rules(root: str, env: Environment):
 
 
 def create_sources(root: str, env: Environment, args: dict):
-    package_name = args['--package-name']
-
     location = root + '/src'
     os.mkdir(location)
 
     main_location = location + '/main'
     os.mkdir(main_location)
 
-    create_manifest(main_location, env, args, package_name)
-    create_main_files(main_location, env, args, package_name)
+    create_manifest(main_location, env, args)
+    create_main_files(main_location, env, args)
     create_resources_files(main_location, env, args)
 
     test_location = location + '/test'
     os.mkdir(test_location)
 
-    create_unit_test_files(test_location, env, package_name)
+    create_unit_test_files(test_location, env, args)
 
     instrumented_test_location = location + '/androidTest'
     os.mkdir(instrumented_test_location)
 
     create_instrumented_test_files(
-        instrumented_test_location, env, package_name)
+        instrumented_test_location, env, args)
 
 
-def create_manifest(root: str, env: Environment, args: dict, package_name: str):
+def create_manifest(root: str, env: Environment, args: dict):
     manifest = root + '/' + 'AndroidManifest.xml'
     template = env.get_template('app/src/main/AndroidManifest.xml.jinja')
+
+    package_name = get_package_name(args)
 
     app_class_name = str(args['<project>']).title(
     ).strip().replace(' ', '') + 'App'
@@ -80,15 +83,9 @@ def create_manifest(root: str, env: Environment, args: dict, package_name: str):
     print('📄 [:app] AndroidManifest.xml')
 
 
-def create_main_files(root: str, env: Environment, args: dict, package_name: str):
-    location = root + '/kotlin'
-    os.mkdir(location)
-
-    packages = package_name.split('.')
-
-    for p in packages:
-        location += f"/{p}"
-        os.mkdir(location)
+def create_main_files(root: str, env: Environment, args: dict):
+    package_name = get_package_name(args)
+    location = create_package_directories(root + '/kotlin', package_name)
 
     app_class_name = str(args['<project>']).title(
     ).strip().replace(' ', '') + 'App'
@@ -113,7 +110,7 @@ def create_main_files(root: str, env: Environment, args: dict, package_name: str
             theme_name=theme_name
         ))
 
-    create_theme_files(location, env, package_name, theme_name)
+    create_theme_files(location, env, args, theme_name)
 
     print('📄 [:app] Source files')
 
@@ -149,17 +146,16 @@ def create_resources_files(root: str, env: Environment, args: dict):
     print('📄 [:app] XML Resource files')
 
 
-def create_theme_files(root: str, env: Environment, package_name: str, theme_name: str):
-    location = root + '/shared'
-    os.mkdir(location)
-
-    location += '/theme'
-    os.mkdir(location)
+def create_theme_files(root: str, env: Environment, args: dict, theme_name: str):
+    location = root + '/shared/theme'
+    os.makedirs(location)
 
     color_kt = location + '/Color.kt'
     shape_kt = location + '/Shape.kt'
     theme_kt = location + '/Theme.kt'
     type_kt = location + '/Type.kt'
+
+    package_name = get_package_name(args)
 
     template = env.get_template(
         'app/src/main/kotlin/shared/theme/Color.kt.jinja')
@@ -185,15 +181,9 @@ def create_theme_files(root: str, env: Environment, package_name: str, theme_nam
         f.write(template.render(package_name=package_name))
 
 
-def create_unit_test_files(root: str, env: Environment, package_name: str):
-    location = root + '/kotlin'
-    os.mkdir(location)
-
-    packages = package_name.split('.')
-
-    for p in packages:
-        location += f"/{p}"
-        os.mkdir(location)
+def create_unit_test_files(root: str, env: Environment, args: dict):
+    package_name = get_package_name(args)
+    location = create_package_directories(root + '/kotlin', package_name)
 
     example_unit_test_kt = location + '/ExampleUnitTest.kt'
     template = env.get_template('app/src/test/kotlin/ExampleUnitTest.kt.jinja')
@@ -203,15 +193,9 @@ def create_unit_test_files(root: str, env: Environment, package_name: str):
     print('📄 [:app] Unit test files')
 
 
-def create_instrumented_test_files(root: str, env: Environment, package_name: str):
-    location = root + '/kotlin'
-    os.mkdir(location)
-
-    packages = package_name.split('.')
-
-    for p in packages:
-        location += f"/{p}"
-        os.mkdir(location)
+def create_instrumented_test_files(root: str, env: Environment, args: dict):
+    package_name = get_package_name(args)
+    location = create_package_directories(root + '/kotlin', package_name)
 
     example_instrumented_test_kt = location + '/ExampleInstrumentedTest.kt'
     template = env.get_template(
