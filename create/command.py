@@ -1,8 +1,6 @@
 import shutil
 import inquirer
 
-from jinja2 import Environment, PackageLoader
-
 from create.git_files import create as create_git_files
 from create.gradle_files import create as create_gradle_files
 from create.app_module_files import create as create_app_module
@@ -11,6 +9,7 @@ from create.data_module_files import create as create_data_module
 import os
 from utils import error_utils
 from utils.args_utils import get_project_name, get_resolved_project_location
+from utils.jinja_utils import create_environment
 
 
 def invoke(args: dict):
@@ -40,7 +39,7 @@ def invoke(args: dict):
 
     os.mkdir(location)
 
-    env = Environment(loader=PackageLoader("create"))
+    env = create_environment("create")
     create_git_files(location, env)
     create_gradle_files(location, env, args)
     create_app_module(location, env, args)

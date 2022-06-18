@@ -1,9 +1,9 @@
 from utils.args_utils import get_resolved_location
+from utils.jinja_utils import create_environment
 from utils.slug_utils import get_slug_for
 from add_ci.gitlab_ci_cd import add_gitlab_ci_cd
 from add_ci.jenkins import add_jenkins
 from add_ci.bitrise import add_bitrise
-from jinja2 import Environment, PackageLoader
 
 import inquirer
 import os
@@ -35,7 +35,7 @@ _questions = [
 
 
 def invoke(args: dict):
-    env = Environment(loader=PackageLoader(__package__))
+    env = create_environment('add_ci')
 
     location = get_resolved_location(args)
     if not os.path.isdir(location):
