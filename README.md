@@ -8,25 +8,38 @@ This CLI aims to help you to initialize a new modern Android project with:
 
 It also helps with CI integration.
 
-## Installation
+## Installation (MacOs/Linux only)
+
+### Homebrew
+
+```bash
+brew tap vincentauguin/cli
+brew install aph
+```
+
+### Manually
 
 Download the latest release of this repository and unzip the archive:
 ```bash
 tar -xf aph.tar.gz
-cd aph/
 chmod +x ./aph
-```
-
-Ensure you have the environment variable `ANDROID_SDK_ROOT` set, if not:
-```bash
-export ANDROID_SDK_ROOT="/path/to/android/sdk"
+cp aph /usr/local/bash # or whatever directory in your $PATH
 ```
 
 ## Usage
 
 ### Create project
 
-To create a project:
+You need to have the env variable `ANDROID_SDK_ROOT` set, if not:
+
+```bash
+# ZSH
+echo 'export ANDROID_SDK_ROOT=path/to/sdk/location' >> ~/.zshenv && source ~/.zshenv
+# Bash
+echo 'export ANDROID_SDK_ROOT=path/to/sdk/location' >> ~/.bash_profile && source ~/.bash_profile
+```
+
+Then, to create a project:
 ```bash
 ./aph create \
     --package-name=com.example.app
@@ -63,6 +76,6 @@ To get full available commands and options
     - [x] Bitrise.io
     - [ ] Buddy.works
 
-## Contribution
+## Contributing
 
 Feel free to contribute with pull requests :sunglasses:

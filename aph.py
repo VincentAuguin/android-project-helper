@@ -1,6 +1,6 @@
 """
 Android Project Helper
-by Vincent Auguin (https://github.com/VincentAuguin/android-project-helper)
+https://github.com/VincentAuguin/android-project-helper
 
 Usage:
   aph create --package-name=<package> [options] <project> [<location>]
