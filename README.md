@@ -79,3 +79,29 @@ To get full available commands and options
 ## Contributing
 
 Feel free to contribute with pull requests :sunglasses:
+
+### Develop from sources
+
+```bash
+# Binary dependencies
+brew install python@3.9 gradle
+# Python dependencies
+pip3 install jinja2 inquirer
+# Run from source
+python3 aph.py <command>
+```
+
+### Create a package from source
+
+```bash
+# Install pyinstaller to bundle our python app
+pip3 install pyinstaller
+# Bundle it
+pyinstaller \
+--add-data add_ci/templates:add_ci/templates \
+--add-data create/templates:create/templates \
+--onefile aph.py
+# Test the generated bundle
+cd dist
+./aph <command>
+```
