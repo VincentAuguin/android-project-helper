@@ -68,7 +68,7 @@ To get full available commands and options
 
 - [x] `help` command
 - [x] `create` command to initiate an Android app skeleton
-- [ ] `add:module` command to add a module to an existing Android project
+- [x] `add:module` command to add a module to an existing Android project
 - [x] `add:ci` command to add preformated CI solution:
     - [x] Gitlab CI/CD
     - [ ] Github Actions

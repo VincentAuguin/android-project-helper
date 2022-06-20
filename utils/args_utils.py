@@ -1,5 +1,7 @@
 import os
 
+from utils.slug_utils import get_slug_for
+
 
 def get_package_name(args: dict):
     return args['--package-name']
@@ -7,8 +9,6 @@ def get_package_name(args: dict):
 
 def get_kotlin_version(args: dict):
     version = args['--kotlin-version']
-    if not version:
-        version = _default_kotlin_version
     if version not in _kotlin_versions_to_compose_versions:
         raise RuntimeError(
             f'The kotlin version provided ({version}) is not supported')
@@ -17,8 +17,6 @@ def get_kotlin_version(args: dict):
 
 def get_gradle_plugin_version(args: dict):
     version = args['--gradle-plugin-version']
-    if not version:
-        version = _default_gradle_plugin_version
     if version not in _gradle_plugin_versions_to_gradle_versions:
         raise RuntimeError(
             f'The gradle plugin version provided ({version}) is not supported')
@@ -32,22 +30,16 @@ def get_gradle_version(args: dict):
 
 def get_min_sdk_version(args: dict):
     version = args['--min-sdk-version']
-    if not version:
-        version = '26'
     return version
 
 
 def get_compile_sdk_version(args: dict):
     version = args['--compile-sdk-version']
-    if not version:
-        version = '33'
     return version
 
 
 def get_target_sdk_version(args: dict):
     version = args['--target-sdk-version']
-    if not version:
-        version = '31'
     return version
 
 
@@ -61,7 +53,7 @@ def get_resolved_location(args: dict):
 
 def get_resolved_project_location(args: dict):
     location = get_resolved_location(args)
-    location += '/' + get_project_name(args).replace(' ', '-')
+    location += '/' + get_slug_for(get_project_name(args))
     return location
 
 
@@ -74,7 +66,6 @@ def get_compose_version(args: dict):
     return _kotlin_versions_to_compose_versions[kotlin_version]
 
 
-_default_gradle_plugin_version = '7.2.1'
 _gradle_plugin_versions_to_gradle_versions = {
     '7.0.0': '7.0',
     '7.0.1': '7.0',
@@ -89,7 +80,6 @@ _gradle_plugin_versions_to_gradle_versions = {
     '7.2.1': '7.3.3'
 }
 
-_default_kotlin_version = '1.6.10'
 _kotlin_versions_to_compose_versions = {
     '1.5.10': '1.0.0',
     '1.5.21': '1.0.2',

@@ -29,11 +29,15 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':domain')
+    {%- for module in dependence_modules %}
+    implementation project(path: ':{{ module }}')
+    {%- endfor %}
 
     implementation 'javax.inject:javax.inject:1'
     implementation "com.google.dagger:hilt-android:2.38.1"
     kapt "com.google.dagger:hilt-compiler:2.38.1"
 
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.5.21'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.0-M1'
+    testImplementation 'io.mockk:mockk:1.12.0'
 }
