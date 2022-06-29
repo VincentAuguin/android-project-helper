@@ -1,12 +1,8 @@
 # Android Helper Project (APH)
 
-This CLI aims to help you to initialize a new modern Android project with:
+This CLI aims to help you wrapping up your Android project quickly.
 
-- Kotlin
-- Compose
-- Hilt
-
-It also helps with CI integration.
+[![asciicast](https://asciinema.org/a/E91ADazWP2qHvZ11nXSgFeZWg.svg)](https://asciinema.org/a/E91ADazWP2qHvZ11nXSgFeZWg?speed=3)
 
 ## Installation (MacOs/Linux only)
 
@@ -41,18 +37,25 @@ echo 'export ANDROID_SDK_ROOT=path/to/sdk/location' >> ~/.bash_profile && source
 
 Then, to create a project:
 ```bash
-./aph create \
+aph create \
     --package-name=com.example.app
     --min-sdk-version=26 \
     "My awesome Android project" \
     /path/to/location
 ```
 
+### Add module
+
+To add a new module to an existing project:
+```bash
+aph add:module /path/to/android/project
+```
+
 ### Add CI solution
 
 To build and deploy your app with automated CI:
 ```bash
-./aph add:ci
+aph add:ci
 ```
 
 See the current supported solutions in [Roadmap](#Roadmap) section.
@@ -61,7 +64,7 @@ See the current supported solutions in [Roadmap](#Roadmap) section.
 
 To get full available commands and options
 ```bash
-./aph help
+aph help
 ```
 
 ## Roadmap
@@ -91,7 +94,7 @@ pip3 install jinja2 inquirer
 python3 aph.py <command>
 ```
 
-### Create a package from source
+### Bundle it
 
 ```bash
 # Install pyinstaller to bundle our python app
@@ -100,8 +103,23 @@ pip3 install pyinstaller
 pyinstaller \
 --add-data add_ci/templates:add_ci/templates \
 --add-data create/templates:create/templates \
+--add-data add_module/templates:add_module/templates \
 --onefile aph.py
 # Test the generated bundle
 cd dist
 ./aph <command>
+```
+
+### Distribute it
+
+Create a Tag according to SemVer `X.Y.Z` and create the associated Release on this repository. Upload the archived binary:
+
+```bash
+tar -czvf aph.tar.gz aph
+```
+
+Get the SHA-256 signature to update [homebrew formula](https://github.com/VincentAuguin/homebrew-cli/blob/main/Formula/aph.rb):
+
+```bash
+shasum -a 256 aph.tar.gz
 ```
