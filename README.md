@@ -89,7 +89,7 @@ Feel free to contribute with pull requests :sunglasses:
 # Binary dependencies
 brew install python@3.9 gradle
 # Python dependencies
-pip3 install jinja2 inquirer
+pip3 install jinja2 inquirer docopt
 # Run from source
 python3 aph.py <command>
 ```
@@ -104,6 +104,7 @@ pyinstaller \
 --add-data add_ci/templates:add_ci/templates \
 --add-data create/templates:create/templates \
 --add-data add_module/templates:add_module/templates \
+--target-architecture universal2 \
 --onefile aph.py
 # Test the generated bundle
 cd dist
