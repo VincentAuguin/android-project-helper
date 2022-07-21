@@ -5,6 +5,8 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+apply from: './dependencies.gradle'
+
 android {
     compileSdk project.ext.compile_sdk
 
@@ -33,11 +35,12 @@ dependencies {
     implementation project(path: ':{{ module }}')
     {%- endfor %}
 
-    implementation 'javax.inject:javax.inject:1'
-    implementation "com.google.dagger:hilt-android:2.38.1"
-    kapt "com.google.dagger:hilt-compiler:2.38.1"
+    implementation {{ module_name }}Dependencies['javax-inject']
+    implementation {{ module_name }}Dependencies['kotlinx-coroutines']
+    implementation {{ module_name }}Dependencies['hilt-android']
+    kapt {{ module_name }}Dependencies['hilt-compiler']
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.5.21'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.0-M1'
-    testImplementation 'io.mockk:mockk:1.12.0'
+    testImplementation {{ module_name }}TestDependencies['coroutines-test']
+    testImplementation {{ module_name }}TestDependencies['junit']
+    testImplementation {{ module_name }}TestDependencies['mockk']
 }

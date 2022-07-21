@@ -3,6 +3,8 @@ plugins {
     id 'kotlin'
 }
 
+apply from: './dependencies.gradle'
+
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
@@ -17,10 +19,10 @@ dependencies {
     implementation project(path: ':{{ module }}')
     {%- endfor %}
 
-    implementation 'javax.inject:javax.inject:1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
+    implementation {{ module_name }}Dependencies['javax-inject']
+    implementation {{ module_name }}Dependencies['kotlinx-coroutines']
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.5.21'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.0-M1'
-    testImplementation 'io.mockk:mockk:1.12.0'
+    testImplementation {{ module_name }}TestDependencies['coroutines-test']
+    testImplementation {{ module_name }}TestDependencies['junit']
+    testImplementation {{ module_name }}TestDependencies['mockk']
 }

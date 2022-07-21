@@ -14,6 +14,7 @@ def create(name: str, root: str, env: Environment, args: dict, dependence_module
     package_name = find_package_name(root)
 
     create_build_gradle(name, location, env, dependence_modules)
+    create_dependencies_gradle(name, location, env)
     create_sources(name, location, env, args, package_name)
     create_proguard_rules(name, location, env)
 
@@ -23,8 +24,21 @@ def create_build_gradle(slug: str, root: str, env: Environment, dependence_modul
     template = env.get_template('android_module/build.gradle.jinja')
 
     with open(build_gradle, 'w') as f:
-        f.write(template.render(dependence_modules=dependence_modules))
+        f.write(template.render(
+            module_name=slug,
+            dependence_modules=dependence_modules
+        ))
     print(f'📄 [:{slug}] build.gradle')
+
+
+def create_dependencies_gradle(slug: str, root: str, env: Environment):
+    gradle_file = root + '/' + 'dependencies.gradle'
+    template = env.get_template('android_module/dependencies.gradle.jinja')
+
+    with open(gradle_file, 'w') as f:
+        f.write(template.render(module_name=slug))
+
+    print(f'📄 [:{slug}] dependencies.gradle')
 
 
 def create_proguard_rules(slug: str, root: str, env: Environment):
