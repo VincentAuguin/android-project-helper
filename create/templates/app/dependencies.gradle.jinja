@@ -1,0 +1,25 @@
+ext.compose_version = '{{ compose_version }}'
+
+ext.appDependencies = [
+    'androidx-core': 'androidx.core:core-ktx:1.8.0',
+    'android-material': 'com.google.android.material:material:1.6.1',
+    'androidx-compose-ui': "androidx.compose.ui:ui:$compose_version",
+    'androidx-compose-material': "androidx.compose.material:material:$compose_version",
+    'androidx-lifecycle': 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0',
+    'androidx-activity-compose': 'androidx.activity:activity-compose:1.5.0',
+    'androidx-navigation-compose': 'androidx.navigation:navigation-compose:2.5.0',
+    'hilt-android': "com.google.dagger:hilt-android:$hilt_version",
+    'hilt-compiler': "com.google.dagger:hilt-compiler:$hilt_version",
+]
+
+ext.appTestDependencies = [
+    'junit': 'junit:junit:4.13.2',
+    'androix-test-junit': 'androidx.test.ext:junit:1.1.3',
+    'androix-test-espresso': 'androidx.test.espresso:espresso-core:3.4.0',
+    'androix-test-compose-ui': "androidx.compose.ui:ui-test-junit4:$compose_version",
+    'coroutines-test': 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.2',
+]
+
+ext.appDebugDependencies = [
+    'androidx-compose-ui-preview': "androidx.compose.ui:ui-tooling-preview:$compose_version",
+]

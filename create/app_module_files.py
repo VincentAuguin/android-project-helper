@@ -3,7 +3,7 @@ import shutil
 
 from jinja2 import Environment
 from shutil import ignore_patterns
-from utils.args_utils import get_package_name
+from utils.args_utils import get_compose_version, get_package_name
 
 from utils.package_utils import create_package_directories
 
@@ -15,13 +15,14 @@ def create(root: str, env: Environment, args: dict):
 
     create_build_gradle(location, env, args)
     create_proguard_rules(location, env)
+    create_dependencies_gradle(location, env, args)
     create_sources(location, env, args)
 
 
 def create_build_gradle(root: str, env: Environment, args: dict):
     build_gradle = root + '/' + 'build.gradle'
     template = env.get_template('app/build.gradle.jinja')
-    package_name = args['--package-name']
+    package_name = get_package_name(args)
 
     with open(build_gradle, 'w') as f:
         f.write(template.render(package_name=package_name))
@@ -58,6 +59,18 @@ def create_sources(root: str, env: Environment, args: dict):
 
     create_instrumented_test_files(
         instrumented_test_location, env, args)
+
+
+def create_dependencies_gradle(root: str, env: Environment, args: dict):
+    gradle_file = root + '/' + 'dependencies.gradle'
+    template = env.get_template('app/dependencies.gradle.jinja')
+
+    compose_version = get_compose_version(args)
+
+    with open(gradle_file, 'w') as f:
+        f.write(template.render(compose_version=compose_version))
+
+    print('📄 [:app] dependencies.gradle')
 
 
 def create_manifest(root: str, env: Environment, args: dict):

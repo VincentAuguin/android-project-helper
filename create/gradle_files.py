@@ -1,7 +1,7 @@
 import utils
 from utils import error_utils
 from utils.error_utils import raise_and_clean
-from utils.args_utils import get_compile_sdk_version, get_compose_version, get_kotlin_version, get_gradle_plugin_version, get_min_sdk_version, get_gradle_version, get_target_sdk_version
+from utils.args_utils import get_compile_sdk_version, get_kotlin_version, get_gradle_plugin_version, get_min_sdk_version, get_gradle_version, get_target_sdk_version
 import os
 import subprocess
 
@@ -64,7 +64,6 @@ def create_build_gradle(root: str, env: Environment, args: dict):
     target_sdk_version = get_target_sdk_version(args)
     kotlin_version = get_kotlin_version(args)
     gradle_plugin_version = get_gradle_plugin_version(args)
-    compose_version = get_compose_version(args)
 
     if min_sdk_version > compile_sdk_version or min_sdk_version > target_sdk_version or target_sdk_version > compile_sdk_version:
         message = f"""
@@ -80,8 +79,7 @@ def create_build_gradle(root: str, env: Environment, args: dict):
             compile_sdk=compile_sdk_version,
             target_sdk=target_sdk_version,
             kotlin_version=kotlin_version,
-            gradle_plugin_version=gradle_plugin_version,
-            compose_version=compose_version
+            gradle_plugin_version=gradle_plugin_version
         ))
     print('📄 build.gradle')
 
