@@ -47,6 +47,7 @@ def create_proguard_rules(slug: str, root: str, env: Environment):
 
     with open(proguard_rules, 'w') as f:
         f.write(template.render())
+
     print(f'📄 [:{slug}] proguard-rules.pro')
 
 
@@ -63,7 +64,9 @@ def create_sources(slug: str, root: str, env: Environment, args: dict, package_n
     main_location += '/kotlin'
     os.mkdir(main_location)
 
-    create_package_directories(location, package_name)
+    create_package_directories(main_location, package_name)
+
+    print(f'📄 [:{slug}] Source files')
 
     test_location = location + '/test'
     os.mkdir(test_location)
